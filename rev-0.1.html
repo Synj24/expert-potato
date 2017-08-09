@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Revision 0.1</title>
+</head>
+<body>
+
+
+<canvas id="game-window" width="256px" height="256px"></canvas>
+
+<script>
+	var canvas = document.getElementById("game-window").getContext('2d'); // define canvas and set context to 2d
+	var boat = new Image(); //create new image element
+	var boatWidth = 16; //define the sprites width...
+	var boatHeight = 16; //... and height
+	var rotation = 0;
+
+	//Listen for a keypress and decide wether to increase or decrease the rotation
+	document.addEventListener("keypress", function(e) {
+		if (e.key === "d") {
+			rotation++;
+			console.log("incremented");
+		} else if (e.key === "a") {
+			rotation--;
+			console.log("decremented");
+		}
+	});
+
+	// boat.onload = function() {
+	// 	console.log(rotation);
+	// 	canvas.rotate((Math.PI / 180) * rotation) // apply rotation(converted from radians)
+
+	// 	canvas.drawImage(boat, 128-(boatWidth/2), 128-(boatHeight/2)); //draw the sprite of the boat and centre it
+	// };
+
+	boat.src = 'crappy-placeholder.png'; //set souce of image
+
+	draw = function() {
+		console.log(rotation);
+		canvas.rotate((Math.PI / 180) * rotation) // apply rotation(converted from radians)
+
+		canvas.drawImage(boat, 128-(boatWidth/2), 128-(boatHeight/2)); //draw the sprite of the boat and centre it
+	}
+</script>
+</body>
+</html>
