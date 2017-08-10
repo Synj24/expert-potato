@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="utf-8" />
 	<title>Revision 0.1</title>
+	<style>
+		* { padding: 0; margin: 0; }
+		canvas { background: #eee; display: block; margin: 0 auto; }
+	</style>
 </head>
 <body>
 
@@ -9,38 +14,104 @@
 <canvas id="game-window" width="256px" height="256px"></canvas>
 
 <script>
-	var canvas = document.getElementById("game-window").getContext('2d'); // define canvas and set context to 2d
-	var boat = new Image(); //create new image element
+	var canvas = document.getElementById("game-window"); //store a reference to the canvas element
+	var ctx = canvas.getContext('2d'); // create a variable to store the 2d rendering context
+	var canvasWidth = 256; //set the canvas width...
+	var canvasHeight = 256; //... and height
+
+	var boat = new Image(); //create new image element for boat
 	var boatWidth = 16; //define the sprites width...
 	var boatHeight = 16; //... and height
-	var rotation = 0;
+	boat.src = 'crappy-placeholder.png'; //set souce of boat image
 
-	//Listen for a keypress and decide wether to increase or decrease the rotation
-	document.addEventListener("keypress", function(e) {
-		if (e.key === "d") {
-			rotation++;
-			console.log("incremented");
-		} else if (e.key === "a") {
-			rotation--;
-			console.log("decremented");
-		}
-	});
+	var map =  new Image(); //create a new image element for the map
+	var mapWidth = 768; //define the maps width...
+	var mapHeight = 768; //... and height
+	map.src = 'crappy-placeholder-map.png' //set source of the map image
 
-	// boat.onload = function() {
-	// 	console.log(rotation);
-	// 	canvas.rotate((Math.PI / 180) * rotation) // apply rotation(converted from radians)
+	var rightPressed = false;
+	var leftPressed = false;
 
-	// 	canvas.drawImage(boat, 128-(boatWidth/2), 128-(boatHeight/2)); //draw the sprite of the boat and centre it
-	// };
+	var heading = 0;
 
-	boat.src = 'crappy-placeholder.png'; //set souce of image
+	var boatPosX = mapWidth/2;
+	var boatPosY = mapHeight/2;
 
-	draw = function() {
-		console.log(rotation);
-		canvas.rotate((Math.PI / 180) * rotation) // apply rotation(converted from radians)
+	document.addEventListener("keydown", keyDownHandler, false);
+	document.addEventListener("keyup", keyUpHandler, false);
 
-		canvas.drawImage(boat, 128-(boatWidth/2), 128-(boatHeight/2)); //draw the sprite of the boat and centre it
+	function keyDownHandler(e) {
+	    if(e.keyCode == 39) {
+	        rightPressed = true;
+	    }
+	    else if(e.keyCode == 37) {
+	        leftPressed = true;
+	    }
 	}
+	function keyUpHandler(e) {
+	    if(e.keyCode == 39) {
+	        rightPressed = false;
+	    }
+	    else if(e.keyCode == 37) {
+	        leftPressed = false;
+	    }
+	}
+
+
+	function calcHeading() {
+
+			if (heading>360 ) {
+				heading = 0;
+			} else if (rightPressed) {
+				heading++
+			} else if (leftPressed) {
+				heading--
+			}
+
+			if (heading<0) {
+				heading = 359;
+			}
+
+		console.log(heading+" degrees")
+	}
+
+	function drawImageRot(img,x,y,width,height,deg){
+
+	    //Convert degrees to radian 
+	    var rad = deg * Math.PI / 180;
+
+	    //Set the origin to the center of the image
+	    ctx.translate(x + width / 2, y + height / 2);
+
+	    //Rotate the canvas around the origin
+	    ctx.rotate(rad);
+
+	    //draw the image    
+	    ctx.drawImage(img,width / 2 * (-1),height / 2 * (-1),width,height);
+
+	    //reset the canvas  
+	    ctx.rotate(rad * ( -1 ) );
+	    ctx.translate((x + width / 2) * (-1), (y + height / 2) * (-1));
+	}
+
+	function drawBoat() {
+
+		drawImageRot(boat, (canvasWidth/2)-(boatWidth/2), (canvasHeight/2)-(boatHeight/2), boatWidth, boatHeight, heading);
+	}
+
+	function drawMap() {
+
+		ctx.drawImage(map, (mapWidth/3-canvasWidth*2), (mapHeight/3-canvasHeight*2));//draw the map
+	}
+
+	function draw() {
+		ctx.clearRect(0 ,0, canvasWidth, canvasHeight); //clear the canvas
+		drawMap();
+		calcHeading();
+		drawBoat();
+	}
+	setInterval(draw, 10);
+
 </script>
 </body>
 </html>
