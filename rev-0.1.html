@@ -33,7 +33,7 @@
 	var leftPressed = false;
 
 	var heading = 0;
-	var vHeading = 0.01;
+	var vHeading = 0.1;
 
 	var boatPosX = canvasWidth/2;
 	var boatPosY = canvasHeight/2;
@@ -61,15 +61,14 @@
 	}
 
 	function adjustBoatPos() {
-		boatDX = boatDX + vHeading * Math.cos(heading-90*(Math.PI / 180));
-		boatDY = boatDY + vHeading * Math.sin(heading+90*(Math.PI / 180));
-		boatPosX = boatPosX + boatDX;
-		boatPosY = boatPosY + boatDY;
+		boatDX = Math.cos((heading - 90) * (Math.PI / 180));
+		boatDY = Math.sin((heading - 90) * (Math.PI / 180));
+
+		boatPosX = boatPosX + boatDX * vHeading;
+		boatPosY = boatPosY + boatDY * vHeading;
 	}
 
-
 	function calcHeading() {
-
 			if (heading>360 ) {
 				heading = 0;
 			} else if (rightPressed) {
@@ -102,26 +101,19 @@
 	}
 
 	function drawImageRot(img,x,y,width,height,deg){
-
 	    var rad = deg * Math.PI / 180; //Convert degrees to radian
-
 	    ctx.translate(x + width / 2, y + height / 2); //Set the origin to the center of the image
-
 	    ctx.rotate(rad); //Rotate the canvas around the origin
-  
 	    ctx.drawImage(img,width / 2 * (-1),height / 2 * (-1),width,height); //draw the image  
-
 	    ctx.rotate(rad * ( -1 ) );
 	    ctx.translate((x + width / 2) * (-1), (y + height / 2) * (-1)); //reset the canvas  
 	}
 
 	function drawBoat() {
-
 		drawImageRot(boat, boatPosX-(boatWidth/2), boatPosY-(boatHeight/2), boatWidth, boatHeight, heading);
 	}
 
 	function drawMap() {
-
 		ctx.drawImage(map, (mapWidth/3-canvasWidth*2), (mapHeight/3-canvasHeight*2));//draw the map
 	}
 
